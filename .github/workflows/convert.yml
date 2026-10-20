@@ -58,17 +58,13 @@ jobs:
         git config --global user.email "action@github.com"
         git config --global user.name "GitHub Action"
 
-    - name: Commit and push output files
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: |
-        DATE_TIME=$(date +'%Y-%m-%d_%H-%M-%S')
-        BRANCH_NAME="output-${DATE_TIME}"
-        git checkout --orphan $BRANCH_NAME  # Create a new orphan branch
-        git reset --hard  # Remove all files from the working directory
-        cp -r output_wav_files /tmp/output_wav_files_copy  # Copy output files to a temporary location
-        git clean -fdx  # Remove all untracked files from the working directory
-        mv /tmp/output_wav_files_copy output_wav_files  # Move the output files back
-        git add output_wav_files  # Add only the output files
-        git commit -m 'Add converted and cleaned wav files'
-        git push --force "https://${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}" $BRANCH_NAME
+
+    - name: Upload converted WAV files
+      uses: actions/upload-artifact@v4
+      with:
+        name: converted-wav-files
+        path: output_wav_files/
+        if-no-files-found: error
+        retention-days: 7
+        compression-level: 0
+
