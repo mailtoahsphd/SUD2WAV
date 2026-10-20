@@ -1,5 +1,5 @@
 # Use an official Java runtime as a parent image
-FROM openjdk:11
+FROM eclipse-temurin:11-jdk
 
 # Set the working directory in the container
 WORKDIR /workspace
